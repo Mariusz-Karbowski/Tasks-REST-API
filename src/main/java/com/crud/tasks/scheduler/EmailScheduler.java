@@ -18,20 +18,13 @@ public class EmailScheduler {
     private final AdminConfig adminConfig;
 
 //    @Scheduled(fixedDelay = 10000)
-    @Scheduled(cron = "0 0 10 * * *")
-    public void sendInformationEmail() {
-        long size = taskRepository.count();
-        String emailContent = "Currently in database you got: " + size + " task.";
-        if(size != 1) {
-            emailContent = "Currently in database you got: " + size + " tasks.";
-        }
-        simpleEmailService.send(
-                new Mail(
-                        adminConfig.getAdminMail(),
-                        SUBJECT,
-                        emailContent,
-                        null
-                )
-        );
+@Scheduled(cron = "0 0 10 * * *")
+public void sendInformationEmail() {
+    long size = taskRepository.count();
+    simpleEmailService.send(Mail.builder()
+            .mailTo(adminConfig.getAdminMail())
+            .subject(SUBJECT)
+            .message("Currently in database you got: " + size + (size > 1 ? " tasks" : " task"))
+            .build() );
     }
 }
